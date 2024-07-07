@@ -1,7 +1,6 @@
-import { View, Text, TextInput, StyleSheet, Dimensions, TouchableOpacity, FlatList } from 'react-native'
+import { View, Text, TextInput, StyleSheet, Dimensions, TouchableOpacity, FlatList, Alert, Button} from 'react-native'
 import React, { useReducer, useState } from 'react'
-
-
+import CircleRating from './Circlerating'
 
 const MeasureScreen = () => {
 
@@ -20,9 +19,16 @@ const MeasureScreen = () => {
   const[ShowDrug, setShowDrug] = useState(false)
   const[Time, setTime] = useState(0)
   const[BMI, setBMI] = useState(0)
+  const [Alcoholrate, setAlcoholRate] = useState(0)
+  const[Smokerate, setSmokerate] = useState(0)
+  const[faintRate, setFaintRate] = useState(0)
+  const[Result, setResult] = useState(0)
+
+
 
   
-  
+
+
 
 
 
@@ -34,7 +40,7 @@ const MeasureScreen = () => {
   }
   const handleBMI = async (x:any) => 
   {
-    setBMI(x)
+      setBMI(x)
   }
   const handleLDL = async (x : any) => 
   {
@@ -114,23 +120,171 @@ const MeasureScreen = () => {
     // console.log(BSBM)
     // console.log(Relation)
     // console.log(Time)
+    
+    const handleChedk = async () =>
+    {
+      var res = 32;
+      if(age > 30)
+      {
+        res = res + 0.06*32;
+      }
+       var bmi = BMI - 25;
+       if(bmi > 0)
+       {
+        res = res + (bmi*4.3)*0.32;
+       }
+       if(130 < LDL  && LDL < 159)
+       {
+        res = res + (5)*0.32;
+       }
+       else if(LDL > 160)
+       { 
+          res = res + 16*(0.32);
+       }
+       if(HDL < 40)
+       {
+        res = res + 3*(0.32);
+       }
+       if(HDL > 60)
+       {
+        res = res - 5*(0.32);
+       }
+       if(dBP > 80)
+       {
+        var x = dBP - 80;
+        x = x/10;
+        if(age > 40)
+        {
+        res = res + x*(0.32);
+        }
+        else 
+        {
+          res = res + x*(0.16);
+        }
+       }
+       if(sBP > 80)
+        {
+         var x = dBP - 80;
+         x = x/10;
+         if(age > 40)
+         {
+         res = res + x*(0.32);
+         }
+         else 
+         {
+           res = res + x*(0.16);
+         }
+        }
+        if(BSBM < 70 || BSBM > 100)
+        {
+          res = res + 3.8*(0.32);
+        }
+        if(BSBM < 70 || BSBM > 150)
+        {
+            res = res + 3.8*(0.32);
+        }
+        if(Relation === 'parents')
+        {
+            res = res + 10.4*(0.32);
+        }
+        if(Relation === 'siblings')
+        {
+          res = res + 17.4*(0.32);
+        }
+        if(Relation === 'uncle')
+        {
+          res = res + 6.4*(0.32);
+        }
+        if(Relation === 'grandparents')
+        {
+          res = res + 1.1*(0.32);
+        }
+        if(Relation === 'self')
+        {
+          res = res + 23.7*(0.32);
+        }
+        if(Time === 1)
+        {
+          res = res + 14*(0.32);
+        }
+        if(Time === 3)
+        {
+          res = res + 7*(0.32);
+        }
+        if(Time == 6)
+        {
+          res = res + 1.75*(0.32);
+        }
+        if(Time >= 12)
+        {
+          res = res + 0.88*(0.32);
+        }
+        if(faintRate < 5)
+        {
+          res = res + faintRate*1.6*(0.32);
+        }
+        else 
+        {
+          res = res + 9.5*(0.32);
+        }
+        if(Alcoholrate < 5)
+        {
+          res = res + Alcoholrate*2.1*(0.32);
+        }
+        else 
+        {
+          res = res + 13*(0.32);
+        }
+
+        if(Smokerate < 3)
+        {
+          res = res + 4*(0.32);
+        }
+        else if(Smokerate < 4)
+        {
+          res = res + 7*(0.32);
+        }
+        else 
+        {
+          if(age > 40)
+          {
+          res = res + 25*(0.32);
+          }
+          else
+          {
+            res = res + 13*(0.32);
+          }
+        }
+        setResult(res);
+        setResult(res);
+        console.log(Result);
+  
+        Alert.alert('Risk Factor', `Your Risk Factor is ${Result}`, [
+         
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ]);
+        
+    }
+
+
+    // console.log(Result);
   return (
     <View style = {styles.container}>
       <View style = {styles.box_box}>
-      <TextInput style = {styles.inputText} placeholder='Please Enter your Age' onChangeText={handleAge}></TextInput>
-      <TextInput style = {styles.inputText} placeholder='Please Enter Your BMI' onChangeText={handleBMI}></TextInput>
+      <TextInput style = {styles.inputText} placeholder='Please Enter your Age' keyboardType='numeric' onChangeText={handleAge}></TextInput>
+      <TextInput style = {styles.inputText} placeholder='Please Enter Your BMI' keyboardType='numeric' onChangeText={handleBMI}></TextInput>
       </View>
       <View style = {styles.box_box}>
-      <TextInput style = {styles.inputText} placeholder='Your LDL cholesterol' onChangeText={handleLDL}></TextInput>
-      <TextInput style = {styles.inputText} placeholder='Your HDL  Cholesterol' onChangeText={handleHDL}></TextInput>
+      <TextInput style = {styles.inputText} placeholder='Your LDL cholesterol' keyboardType='numeric' onChangeText={handleLDL}></TextInput>
+      <TextInput style = {styles.inputText} placeholder='Your HDL  Cholesterol' keyboardType='numeric' onChangeText={handleHDL}></TextInput>
       </View>
       <View style = {styles.box_box}>
-      <TextInput style = {styles.inputText} placeholder='Your Diastole Pressure' onChangeText={handleDiastole_BP}></TextInput>
-      <TextInput style = {styles.inputText} placeholder='Your Systole Pressure' onChangeText={handlesystole_BP}></TextInput>
+      <TextInput style = {styles.inputText} placeholder='Your Diastole Pressure' keyboardType='numeric' onChangeText={handleDiastole_BP}></TextInput>
+      <TextInput style = {styles.inputText} placeholder='Your Systole Pressure' keyboardType='numeric' onChangeText={handlesystole_BP}></TextInput>
       </View>
       <View style = {styles.box_box}>
-      <TextInput style = {styles.inputText} placeholder='Sugar level before Meal' onChangeText={handleSugarBM}></TextInput>
-      <TextInput style = {styles.inputText} placeholder='Sugar level after Meal' onChangeText={handleSugarAM}></TextInput>
+      <TextInput style = {styles.inputText} placeholder='Sugar level before Meal' keyboardType='numeric' onChangeText={handleSugarBM}></TextInput>
+      <TextInput style = {styles.inputText} placeholder='Sugar level after Meal' keyboardType='numeric' onChangeText={handleSugarAM}></TextInput>
       </View>
       <View>
         <TouchableOpacity style = {styles.box_box}>
@@ -233,10 +387,35 @@ const MeasureScreen = () => {
           }
         </View>
       </View>
-      <View>
-        <Text>How often type questions....</Text>
-      
+      <View style = {styles.box_box}>
+        <Text style = {styles.text}>How often you do / Occur any of these activities{'\n'}
+          
+        </Text>
       </View>
+
+      <View style = {styles.howOften}>
+        <View>
+        <Text style = {styles.rate}>Alcohol consumption</Text>
+        </View>
+       <CircleRating rating={Alcoholrate} onChange={setAlcoholRate}/>
+      </View>
+      <View style = {styles.howOften}>
+        <View>
+        <Text style = {styles.rate}>Smoking</Text>
+        </View>
+       <CircleRating rating={Smokerate} onChange={setSmokerate}/>
+      </View>
+      <View style = {styles.howOften}>
+        <View>
+        <Text style = {styles.rate}>Fainting</Text>
+        </View>
+       <CircleRating rating={faintRate} onChange={setFaintRate}/>
+      </View>
+
+
+    <View>
+      <Button title='Check' onPress={handleChedk}/>
+    </View>
       
     </View>
 
@@ -291,9 +470,21 @@ const styles = StyleSheet.create (
       textAlign: 'center',
       justifyContent: 'center',
      }, 
-     starButton :
+     howOften : 
      {
-
+      padding: 20, 
+      flexDirection: 'row',
+      justifyContent: 'space-around'
+     },
+     rate : 
+     {
+      
+      backgroundColor: '#DDDDDD',
+      borderRadius: 15, 
+      padding: 15,
+      justifyContent: 'space-around',
+      width : width/3,
+      textAlign: 'center'
      }
   }
 )
